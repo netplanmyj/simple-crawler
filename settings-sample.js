@@ -1,1 +1,1 @@
-exports.url = "https://www.example.co.jp/";
+exports.xml = "https://www.example.co.jp/sitemap.xml";
