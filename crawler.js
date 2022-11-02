@@ -21,10 +21,10 @@ function getSite(sites) {
     if(error) {
       console.log("Error: " + error);
     }
-    console.log("status: " + response.statusCode);
     if(response.statusCode === 200) {
       var $ = cheerio.load(body);
       console.log("pagetitle:  " + $('title').text());
+      console.log("article:  " + $('article').text());
     }
   });
 }
