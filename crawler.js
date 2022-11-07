@@ -1,6 +1,7 @@
 var Sitemapper = require('sitemapper');
-var request = require('request');
 var cheerio = require('cheerio');
+const axios = require("axios");
+
 var settings = require('./settings.js');
 
 var xml = settings.xml;
@@ -17,14 +18,14 @@ sitemapper.fetch(xml)
 
 function getSite(sites) {
   var url = sites.sites[0];
-  request(url, function(error, response, body) {
-    if(error) {
-      console.log("Error: " + error);
-    }
-    if(response.statusCode === 200) {
-      var $ = cheerio.load(body);
-      console.log("pagetitle:  " + $('title').text());
-      console.log("article:  " + $('article').text());
-    }
-  });
+  axios.get(url)
+  .then((response) => {
+    const $ = cheerio.load(response.data);
+    console.log("pagetitle:  " + $('title').text());
+  })
+  .catch(console.log);
+}
+
+function getContentTitle(html) {
+  
 }
