@@ -1,12 +1,16 @@
 var Sitemapper = require('sitemapper');
 var cheerio = require('cheerio');
 const axios = require("axios");
+const fs = require('fs');
 
 var settings = require('./settings.js');
 
 var xml = settings.xml;
 var sitemapper = new Sitemapper();
 sitemapper.timeout = 5000;
+
+const dataFolder = "./data";
+checkDataPath(dataFolder);
 
 sitemapper.fetch(xml)
   .then(function (sites) {
@@ -26,6 +30,12 @@ function getSite(sites) {
   .catch(console.log);
 }
 
-function getContentTitle(html) {
-  
+function saveData(pages) {
+
+}
+
+function checkDataPath(path) {
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path);
+  }
 }
