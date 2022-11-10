@@ -25,17 +25,30 @@ function getSite(sites) {
   axios.get(url)
   .then((response) => {
     const $ = cheerio.load(response.data);
+    urlToFileName(url);
     console.log("pagetitle:  " + $('title').text());
   })
   .catch(console.log);
 }
 
-function saveData(pages) {
-
+function urlToFileName(url) {
+  const sl = url.indexOf("//");
+  var filename = url.substring(sl+2);
+  filename = filename.replaceAll("/", "-") + ".json";
+  console.log("filename:  " + filename);
 }
 
 function checkDataPath(path) {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path);
+  }
+}
+
+function isExistFile(file) {
+  try {
+    fs.statSync(file);
+    return true
+  } catch(err) {
+    if(err.code === 'ENOENT') return false
   }
 }
