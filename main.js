@@ -5,14 +5,14 @@ const fs = require('fs');
 
 var settings = require('./settings.js');
 
-var xml = settings.xml;
+var sitemap = settings.sitemap;
 var sitemapper = new Sitemapper();
 sitemapper.timeout = 5000;
 
 const dataFolder = "./data";
 checkDataPath(dataFolder);
 
-sitemapper.fetch(xml)
+sitemapper.fetch(sitemap)
   .then(function (sites) {
     getSite(sites);
   })
@@ -20,7 +20,8 @@ sitemapper.fetch(xml)
     console.log(error);
   });
 
-function getSite(sites) {
+async function getSite(sites) {
+  const setTimeout = require('timers/promises');
   var url = sites.sites[0];
   axios.get(url)
   .then((response) => {
