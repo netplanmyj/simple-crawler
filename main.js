@@ -1,11 +1,14 @@
-var Sitemapper = require('sitemapper');
-var cheerio = require('cheerio');
-const axios = require("axios");
-const fs = require('fs');
+import Sitemapper from 'sitemapper';
+import pkg from 'cheerio';
+const { load } = pkg;
+import axios from "axios";
+import { writeFile, existsSync, mkdirSync, statSync } from 'fs';
+import { setTimeout } from 'timers/promises';
 
-var settings = require('./settings.js');
+import { sitemap as _sitemap } from './settings.js';
+import { interval as _interval } from './settings.js';
 
-var sitemap = settings.sitemap;
+var sitemap = _sitemap;
 var sitemapper = new Sitemapper();
 sitemapper.timeout = 5000;
 
@@ -21,12 +24,11 @@ sitemapper.fetch(sitemap)
   });
 
 async function getSite(sites) {
-  const setTimeout = require('timers/promises');
   var url = sites.sites[0];
   axios.get(url)
   .then((response) => {
-    const $ = cheerio.load(response.data);
-    f = dataFolder + "/" + urlToFileName(url);
+    const $ = load(response.data);
+    const f = dataFolder + "/" + urlToFileName(url);
     console.log("pagetitle:  " + $('title').text());
     let data = {
       url: url,
@@ -35,13 +37,14 @@ async function getSite(sites) {
     saveFile(f, data);
   })
   .catch(console.log);
+  await setTimeout(1000);
 }
 function saveFile(path, data) {
   const jsonStr = JSON.stringify(data);
   if (isExistFile(path) == true) {
     return;
   }
-  fs.writeFile(path, jsonStr, (err) => {
+  writeFile(path, jsonStr, (err) => {
     if (err) rej(err);
     if (!err) {
       console.log(data);
@@ -55,14 +58,14 @@ function urlToFileName(url) {
 }
 
 function checkDataPath(path) {
-  if (!fs.existsSync(path)) {
-    fs.mkdirSync(path);
+  if (!existsSync(path)) {
+    mkdirSync(path);
   }
 }
 
 function isExistFile(file) {
   try {
-    fs.statSync(file);
+    statSync(file);
     return true
   } catch(err) {
     if(err.code === 'ENOENT') return false
