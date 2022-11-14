@@ -30,11 +30,13 @@ async function getSite(sites) {
       url: url,
       title: $('title').text()
     }
-    saveFile(urlToFileName(url), data);
+    let file = makeFileName(url);
+    saveFile(file, data);
   })
   .catch(console.log);
   await setTimeout(1000);
 }
+
 function saveFile(filename, data) {
   const dataFolder = "./data";
 
@@ -57,10 +59,17 @@ function saveFile(filename, data) {
   });
 }
 
-function urlToFileName(url) {
-  const sl = url.indexOf("//");
-  let filename = url.substring(sl+2);
-  return filename.replaceAll("/", "-") + ".json";
+function getDomainName(url) {
+  let s = url.indexOf("//");
+  let domain = url.substring(s+2);
+  s = domain.indexOf("/");
+  return domain.substring(0, s);
+}
+
+function makeFileName(url) {
+  let file = getDomainName(url);
+  file += "-" + Date.now().toString();
+  return file + ".json";
 }
 
 function isExistFile(file) {
