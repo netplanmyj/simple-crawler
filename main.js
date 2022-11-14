@@ -12,9 +12,6 @@ var sitemap = _sitemap;
 var sitemapper = new Sitemapper();
 sitemapper.timeout = 5000;
 
-const dataFolder = "./data";
-checkDataPath(dataFolder);
-
 sitemapper.fetch(sitemap)
   .then(function (sites) {
     getSite(sites);
@@ -28,39 +25,42 @@ async function getSite(sites) {
   axios.get(url)
   .then((response) => {
     const $ = load(response.data);
-    const f = dataFolder + "/" + urlToFileName(url);
     console.log("pagetitle:  " + $('title').text());
     let data = {
       url: url,
       title: $('title').text()
     }
-    saveFile(f, data);
+    saveFile(urlToFileName(url), data);
   })
   .catch(console.log);
   await setTimeout(1000);
 }
-function saveFile(path, data) {
+function saveFile(filename, data) {
+  const dataFolder = "./data";
+
+  if (!existsSync(dataFolder)) {
+    mkdirSync(dataFolder);
+  }
+  
+  const filepath = dataFolder + "/" + filename;
   const jsonStr = JSON.stringify(data);
-  if (isExistFile(path) == true) {
+  if (isExistFile(filepath) == true) {
+    console.log(filepath + " already exists.");
     return;
   }
-  writeFile(path, jsonStr, (err) => {
+
+  writeFile(filepath, jsonStr, (err) => {
     if (err) rej(err);
     if (!err) {
       console.log(data);
     }
   });
 }
+
 function urlToFileName(url) {
   const sl = url.indexOf("//");
   let filename = url.substring(sl+2);
   return filename.replaceAll("/", "-") + ".json";
-}
-
-function checkDataPath(path) {
-  if (!existsSync(path)) {
-    mkdirSync(path);
-  }
 }
 
 function isExistFile(file) {
