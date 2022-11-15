@@ -19,21 +19,29 @@ sitemapper.fetch(sitemap)
   .catch(function (error) {
     console.log(error);
   });
-
+  
 async function getSite(sites) {
   var url = sites.sites[0];
+  let data = {
+    "urls": []
+  };
   axios.get(url)
   .then((response) => {
     const $ = load(response.data);
     console.log("pagetitle:  " + $('title').text());
-    let data = {
-      url: url,
-      title: $('title').text()
+    let json = {
+      "url": url,
+      "title": $('title').text()
     }
-    let file = makeFileName(url);
-    saveFile(file, data);
+    console.log("axios"+JSON.stringify(json));
+    data.urls.push(json);
   })
   .catch(console.log);
+  let file = makeFileName(url);
+  console.log("data:" + data);
+  // let json = JSON.parse(data);
+  
+  saveFile(file, JSON.stringify(data));
   await setTimeout(1000);
 }
 
