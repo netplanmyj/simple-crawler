@@ -2,10 +2,9 @@ import Sitemapper from 'sitemapper';
 import axios from "axios";
 import pkg from 'cheerio';
 const { load } = pkg;
-import { sitemap as _sitemap } from './settings.js';
-import { interval as _interval } from './settings.js';
+import config from 'config';
 
-var sitemap = _sitemap;
+const sitemap = config.sitemap;
 var sitemapper = new Sitemapper();
 sitemapper.timeout = 5000;
 
@@ -20,23 +19,23 @@ sitemapper.fetch(sitemap)
     console.log(error);
   });
  
-  function getAllData(URLs){
-    return Promise.all(URLs.map(fetchData));
-  }
+function getAllData(URLs){
+  return Promise.all(URLs.map(fetchData));
+}
   
-  async function fetchData(URL) {
-    try {
-          const response = await axios
-              .get(URL);
-          const $ = load(response.data);
-          console.log("pagetitle:  " + $('title').text());
-          return {
-              success: true,
-              title: $('title').text()
-          };
-      } catch (error) {
-          return { success: false };
-      }
+async function fetchData(URL) {
+  try {
+    const response = await axios
+      .get(URL);
+    const $ = load(response.data);
+    console.log("pagetitle:  " + $('title').text());
+    return {
+      success: true,
+      title: $('title').text()
+    };
+  } catch (error) {
+    return { success: false };
   }
+}
   
   

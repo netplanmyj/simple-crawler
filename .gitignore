@@ -130,5 +130,5 @@ dist
 .pnp.*
 
 *.code-workspace
-settings.js
+/config/development.json
 /data
