@@ -26,15 +26,15 @@ async function getSite(sites) {
     "urls": []
   };
   axios.get(url)
-  .then((response) => {
-    const $ = load(response.data);
-    console.log("pagetitle:  " + $('title').text());
-    let json = {
-      "url": url,
-      "title": $('title').text()
-    }
-    console.log("axios"+JSON.stringify(json));
-    data.urls.push(json);
+    .then((response) => {
+      const $ = load(response.data);
+      console.log("pagetitle:  " + $('title').text());
+      let json = {
+        "url": url,
+        "title": $('title').text()
+      }
+      console.log("axios"+JSON.stringify(json));
+      data.urls.push(json);
   })
   .catch(console.log);
   let file = makeFileName(url);
