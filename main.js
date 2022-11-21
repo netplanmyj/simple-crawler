@@ -1,48 +1,49 @@
 import Sitemapper from 'sitemapper';
-import pkg from 'cheerio';
+import config from 'config';
+import axios from "axios";import pkg from 'cheerio';
 const { load } = pkg;
-import axios from "axios";
 import { writeFile, existsSync, mkdirSync, statSync } from 'fs';
-import { setTimeout } from 'timers/promises';
 
-import { sitemap as _sitemap } from './settings.js';
-import { interval as _interval } from './settings.js';
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
-var sitemap = _sitemap;
+const sitemap = config.sitemap;
 var sitemapper = new Sitemapper();
 sitemapper.timeout = 5000;
 
 sitemapper.fetch(sitemap)
-  .then(function (sites) {
-    getSite(sites);
+  .then(function (data) {
+    getPages(data.sites)
+    .then((res) => {
+      console.log(res);
+      let file = makeFileName(data.sites[0]);
+      saveFile(file, res);
+    });
   })
   .catch(function (error) {
     console.log(error);
   });
-  
-async function getSite(sites) {
-  var url = sites.sites[0];
-  let data = {
-    "urls": []
-  };
-  axios.get(url)
+
+const getPages = async urls => {
+  const results = [];
+
+  for (const url of urls) {
+    console.log(url);
+    axios.get(url)
     .then((response) => {
+      
       const $ = load(response.data);
-      console.log("pagetitle:  " + $('title').text());
-      let json = {
-        "url": url,
-        "title": $('title').text()
-      }
-      console.log("axios"+JSON.stringify(json));
-      data.urls.push(json);
-  })
-  .catch(console.log);
-  let file = makeFileName(url);
-  console.log("data:" + data);
-  // let json = JSON.parse(data);
-  
-  saveFile(file, JSON.stringify(data));
-  await setTimeout(1000);
+      const article = removeCtrls($('article').text());
+      results.push({
+        url: url,
+        title: $('title').text(),
+        article: article
+      });
+
+    });
+    await delay(1000);
+  }
+
+  return results;
 }
 
 function saveFile(filename, data) {
@@ -87,4 +88,11 @@ function isExistFile(file) {
   } catch(err) {
     if(err.code === 'ENOENT') return false
   }
+}
+
+function removeCtrls(text) {
+  text = text.replace(/\r/g, '');
+  text = text.replace(/\n/g, '');
+  text = text.replace(/\t/g, '');
+  return text;
 }
