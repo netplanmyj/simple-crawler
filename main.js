@@ -40,14 +40,14 @@ const getPages = async urls => {
       });
 
     });
-    await delay(1000);
+    await delay(config.interval);
   }
 
   return results;
 }
 
 function saveFile(filename, data) {
-  const dataFolder = "./data";
+  const dataFolder = config.datapath;
 
   if (!existsSync(dataFolder)) {
     mkdirSync(dataFolder);
