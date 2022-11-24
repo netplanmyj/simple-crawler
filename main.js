@@ -3,8 +3,11 @@ import config from 'config';
 import axios from "axios";import pkg from 'cheerio';
 const { load } = pkg;
 import { writeFile, existsSync, mkdirSync, statSync } from 'fs';
+import { promises as fspromis } from "fs"
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+function delay(t) {
+  return new Promise(resolve => setTimeout(resolve, t));
+}
 
 const sitemap = config.sitemap;
 var sitemapper = new Sitemapper();
@@ -17,6 +20,7 @@ sitemapper.fetch(sitemap)
       console.log(res);
       let file = makeFileName(data.sites[0]);
       saveFile(file, res);
+      listFilesAsync();
     });
   })
   .catch(function (error) {
@@ -95,4 +99,20 @@ function removeCtrls(text) {
   text = text.replace(/\n/g, '');
   text = text.replace(/\t/g, '');
   return text;
+}
+
+const listFilesAsync = async () => {
+  try {
+    const dir = config.datapath
+
+    const files = await fspromis.readdir(dir)
+
+    // files object contains all files names
+    // log them on console
+    files.forEach(file => {
+      console.log(file)
+    })
+  } catch (err) {
+    console.error(err)
+  }
 }
