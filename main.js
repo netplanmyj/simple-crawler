@@ -25,7 +25,7 @@ sitemapper.fetch(sitemap)
   .then(function (data) {
     getPages(data.sites)
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       let file = makeFileName(data.sites[0]);
       saveFile(file, res);
       listFilesAsync();
@@ -74,9 +74,9 @@ function saveFile(filename, data) {
 
   writeFile(filepath, jsonStr, (err) => {
     if (err) rej(err);
-    if (!err) {
-      console.log(data);
-    }
+    // if (!err) {
+    //   console.log(data);
+    // }
   });
 }
 
@@ -115,11 +115,9 @@ const listFilesAsync = async () => {
 
     const files = await fspromis.readdir(dir)
 
-    // files object contains all files names
-    // log them on console
-    files.forEach(file => {
-      console.log(file)
-    })
+    // files.forEach(file => {
+    //   console.log(file)
+    // })
   } catch (err) {
     console.error(err)
   }

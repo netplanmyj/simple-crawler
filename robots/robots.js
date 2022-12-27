@@ -6,8 +6,9 @@ function getSitemap() {
     const robots = config.url + "robots.txt";
     axios.get(robots)
         .then(function (response) {
-            parseData(response);
-            resolve(response.data);
+            const data = parseData(response);
+            // resolve(response.data);
+            resolve(data);
         })
         .catch(function (error) {
             // エラー時に実行
@@ -20,10 +21,23 @@ function getSitemap() {
 }
 
 function parseData(response) {
-  let array = response.data.toString().split("\n");
+  let robot = {};
+  let sitemap = [];
+  let disallow = [];
+  let array = response.data.split("\n");
   for(let i in array) {
-    console.log(i + array[i]);
+    let idx = array[i].indexOf('Sitemap:');
+    if (idx >= 0) {
+      sitemap.push(array[i].substring(9));
+    }
+    idx = array[i].indexOf('Disallow:');
+    if (idx >= 0) {
+      disallow.push(array[i].substring(10))
+    }
   }
+  robot.sitemap = sitemap;
+  robot.disallow = disallow;
+  return robot;
 }
 
 export default getSitemap;
