@@ -1,9 +1,11 @@
 import Sitemapper from 'sitemapper';
 import config from 'config';
-import axios from "axios";import pkg from 'cheerio';
+import axios from "axios";
+import pkg from 'cheerio';
 const { load } = pkg;
 import { writeFile, existsSync, mkdirSync, statSync } from 'fs';
 import { promises as fspromis } from "fs"
+import getSitemap from './robots/robots.js';
 
 function delay(t) {
   return new Promise(resolve => setTimeout(resolve, t));
@@ -12,6 +14,12 @@ function delay(t) {
 const sitemap = config.sitemap;
 var sitemapper = new Sitemapper();
 sitemapper.timeout = 5000;
+
+async function getRobots() { 
+  let data = await getSitemap();
+  console.log(data);
+}
+getRobots();
 
 sitemapper.fetch(sitemap)
   .then(function (data) {
