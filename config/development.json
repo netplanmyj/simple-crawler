@@ -1,0 +1,9 @@
+{
+    "url": "http://simplecrawler.local/",
+    "sitemapall": "http://simplecrawler.local/wp-sitemap.xml",
+    "sitemap": "http://simplecrawler.local/wp-sitemap-posts-post-1.xml",
+    "interval": 1000,
+    "datapath": "./data",
+    "json0": "lawallinonehttp.local-1668997273396.json",
+    "json1": "lawallinonehttp.local-1668997350909.json"
+}
